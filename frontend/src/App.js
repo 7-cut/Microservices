@@ -9,6 +9,7 @@ import Admin from './pages/Admin';
 import User from './pages/User';
 import Packages from './pages/Packages';
 import EditPackages from './pages/EditPackages';
+import CustomizePackage from './pages/CustomizePackage';
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -26,7 +27,6 @@ function App() {
           {!user ? (
             <>
               <Link to="/login" className="text-gray-600 hover:text-blue-600">Login</Link>
-              <Link to="/register" className="text-gray-600 hover:text-blue-600">Register</Link>
             </>
           ) : (
             <>
@@ -53,6 +53,7 @@ function App() {
         <Route path="/user" element={<User />} />
         <Route path="/packages" element={<Packages />} />
         <Route path="/admin/edit-packages" element={<EditPackages />} />
+        <Route path="/customize/:pkgId" element={<CustomizePackage />} />
       </Routes>
 
       {/* Footer */}

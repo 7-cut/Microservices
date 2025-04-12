@@ -1,4 +1,3 @@
-// src/pages/Login.js
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
@@ -12,7 +11,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:5005/login', {
+    const response = await fetch(`http://localhost:5005/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
@@ -21,6 +20,9 @@ function Login() {
     const data = await response.json();
 
     if (response.ok) {
+      // Save username to localStorage
+      localStorage.setItem("username", username);
+
       // 🔥 Fix: store username and role at root level, not nested in role
       login({ username, role: data.userType });
 
@@ -59,6 +61,17 @@ function Login() {
         <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
           Login
         </button>
+
+        <p className="mt-4 text-center">
+          Don't have an account?{' '}
+          <span
+            className="text-blue-600 cursor-pointer"
+            onClick={() => navigate('/register')}
+          >
+            Register here
+          </span>
+        </p>
+
       </form>
     </div>
   );

@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('mmt_user'); // clear localStorage on logout
+    localStorage.removeItem('username');
     navigate('/');
   };
 

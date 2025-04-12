@@ -1,3 +1,4 @@
+// src/pages/Register.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +19,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:5005/register", {
+    const response = await fetch(`http://localhost:5005/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -76,6 +77,16 @@ export default function Register() {
           Register
         </button>
       </form>
+
+      <p className="mt-4 text-center">
+        Already have an account?{' '}
+        <span
+          className="text-blue-600 cursor-pointer"
+          onClick={() => navigate('/login')}
+        >
+          Login here
+        </span>
+      </p>
     </div>
   );
 }

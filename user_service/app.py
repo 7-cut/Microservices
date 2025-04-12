@@ -131,5 +131,19 @@ def get_user_info(username):
         return jsonify(user), 200
     return jsonify({"error": "User not found"}), 404
 
+@app.route('/packages/<pkg_id>', methods=['GET'])
+def get_package_by_id(pkg_id):
+    try:
+        # Query the database to find the package by its ID
+        package = db.packages.find_one({"_id": ObjectId(pkg_id)})
+
+        if package:
+            return jsonify(package), 200
+        else:
+            return jsonify({"error": "Package not found"}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(port=5005, debug=True)

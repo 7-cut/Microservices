@@ -1,15 +1,38 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate to redirect users
 
 function Packages() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userDob, setUserDob] = useState("2025-04-12"); // Example user DOB, set to today's date or dynamic user data
+  const [userDob, setUserDob] = useState(""); // User DOB will be fetched from the server
   const [discounts, setDiscounts] = useState({ discount_percent: 0, reason: "" }); // Store discount data
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+  const navigate = useNavigate(); // For navigation purposes
+
+  useEffect(() => {
+  // Check if user is logged in by checking localStorage
+  const username = localStorage.getItem("username");
+  if (username) {
+    setIsLoggedIn(true);
+    // Fetch user data, including DOB from the server
+    fetch(`http://localhost:5005/user/${username}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.dob) {
+          setUserDob(data.dob); // Set the fetched DOB
+        }
+      })
+      .catch((err) => console.error("Failed to fetch user DOB", err));
+  } else {
+    setIsLoggedIn(false);
+  }
+}, []);
+
 
   useEffect(() => {
     // Fetching packages
-    fetch('http://localhost:5001/packages')
+    fetch(`http://localhost:5001/packages`)
       .then((res) => res.json())
       .then((data) => {
         setPackages(data);
@@ -24,7 +47,7 @@ function Packages() {
   useEffect(() => {
     // Fetching discounts based on user DOB
     if (userDob) {
-      fetch('http://localhost:5003/discount/calculate', {
+      fetch(`http://localhost:5003/discount/calculate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ dob: userDob })
@@ -35,19 +58,18 @@ function Packages() {
     }
   }, [userDob]);
 
-  useEffect(() => {
-  const username = localStorage.getItem("username"); // assuming it's stored
-  if (username) {
-    fetch(`http://localhost:5005/user/${username}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.dob) {
-          setUserDob(data.dob);
-        }
-      })
-      .catch((err) => console.error("Failed to fetch user DOB", err));
+  const handleCustomizeClick = (pkgId) => {
+  console.log("Is user logged in:", isLoggedIn);
+  if (!isLoggedIn) {
+    // If the user is not logged in, redirect to the login page
+    alert("You need to log in to customize a package.");
+    navigate('/login'); // Navigate to the login page
+  } else {
+    // If logged in, fetch the package data and navigate to the customization page
+    const selectedPackage = packages.find(pkg => pkg._id === pkgId);
+    navigate(`/customize/${pkgId}`, { state: { packageData: selectedPackage } });
   }
-}, []);
+};
 
   if (loading) return <div className="p-6">Loading packages...</div>;
   if (error) return <div className="p-6 text-red-500">{error}</div>;
@@ -68,7 +90,10 @@ function Packages() {
               <p><strong>Activities:</strong> {pkg.activities.join(', ')}</p>
               <p className="text-green-600"><strong>Discount:</strong> {discount}%</p>
               <p><strong>Discounted Price:</strong> ${discountedPrice.toFixed(2)}</p>
-              <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              <button
+                onClick={() => handleCustomizeClick(pkg._id)}  // Handle the click here
+                className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
                 Customize
               </button>
             </div>
