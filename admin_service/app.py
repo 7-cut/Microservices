@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from db import packages_collection  # Import from db.py
+from bson import ObjectId
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
@@ -22,8 +23,6 @@ def add_package():
     # Insert into MongoDB
     result = packages_collection.insert_one(data)
     return jsonify({"message": "Package added", "package_id": str(result.inserted_id)}), 201
-
-from bson import ObjectId
 
 @app.route('/packages', methods=['GET'])
 def get_all_packages():

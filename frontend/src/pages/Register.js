@@ -5,7 +5,8 @@ export default function Register() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    userType: "user", // Default to non-admin
+    dob: "",
+    userType: "user",
   });
 
   const navigate = useNavigate();
@@ -48,6 +49,13 @@ export default function Register() {
           type="password"
           name="password"
           placeholder="Password"
+          className="w-full border p-2 rounded"
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="date"
+          name="dob"
           className="w-full border p-2 rounded"
           onChange={handleChange}
           required

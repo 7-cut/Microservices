@@ -15,20 +15,20 @@ def register():
     username = data.get("username")
     password = data.get("password")
     userType = data.get("userType", "user")  # default role is 'user'
+    dob = data.get("dob")  # Extract DOB from the request data
 
-    if not username or not password:
-        return jsonify({"error": "Username and password are required"}), 400
+    if not username or not password or not dob:
+        return jsonify({"error": "Username, password, and DOB are required"}), 400
 
     # Check if user already exists
     if users_collection.find_one({"username": username}):
         return jsonify({"error": "Username already taken"}), 409
 
     # Save to DB
-    new_user = {"username": username, "password": password, "userType": userType}
+    new_user = {"username": username, "password": password, "userType": userType, "dob": dob}
     users_collection.insert_one(new_user)
 
     return jsonify({"message": "Registration successful"}), 201
-
 
 @app.route('/user/packages', methods=['GET'])
 def get_packages():
@@ -124,6 +124,12 @@ def login():
     else:
         return jsonify({"message": "Invalid credentials"}), 401
 
+@app.route("/user/<username>", methods=["GET"])
+def get_user_info(username):
+    user = users_collection.find_one({"username": username}, {"_id": 0, "dob": 1})
+    if user:
+        return jsonify(user), 200
+    return jsonify({"error": "User not found"}), 404
 
 if __name__ == '__main__':
     app.run(port=5005, debug=True)
