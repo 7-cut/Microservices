@@ -28,7 +28,7 @@ def calculate_discount():
 
         # Check if it's the user's birthday
         if dob.day == today.day and dob.month == today.month:
-            discount = 20  # 20% discount for birthday
+            discount = 10  # 10% discount for birthday
             reason.append("Birthday 🎂")
 
         # Check for seasonal discounts

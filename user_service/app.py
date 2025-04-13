@@ -2,6 +2,7 @@ import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from db import users_collection
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -124,18 +125,11 @@ def login():
     else:
         return jsonify({"message": "Invalid credentials"}), 401
 
-@app.route("/user/<username>", methods=["GET"])
-def get_user_info(username):
-    user = users_collection.find_one({"username": username}, {"_id": 0, "dob": 1})
-    if user:
-        return jsonify(user), 200
-    return jsonify({"error": "User not found"}), 404
-
 @app.route('/packages/<pkg_id>', methods=['GET'])
 def get_package_by_id(pkg_id):
     try:
         # Query the database to find the package by its ID
-        package = db.packages.find_one({"_id": ObjectId(pkg_id)})
+        package = users_collection.packages.find_one({"_id": ObjectId(pkg_id)})
 
         if package:
             return jsonify(package), 200
@@ -144,6 +138,34 @@ def get_package_by_id(pkg_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/user', methods=['GET'])
+def get_user():
+    username = request.args.get('username')
+    if username:
+        # Fetch user data (including birthday message)
+        user = users_collection.find_one({"username": username})
+        if user:
+            # Check birthday
+            today = datetime.now()
+            dob = datetime.strptime(user['dob'], '%Y-%m-%d')
+            birthday_today = today.month == dob.month and today.day == dob.day
+            birthday_wish = f"🎉 Happy Birthday, {username}!" if birthday_today else ""
+            return jsonify({"birthday_wish": birthday_wish, "username": username})
+        else:
+            return jsonify({"error": "User not found"}), 404
+    return jsonify({"error": "Username is required"}), 400
+
+@app.route('/user/<username>', methods=['GET'])
+def get_user_by_username(username):
+    user = users_collection.find_one({"username": username})
+    if user:
+        return jsonify({
+            "username": user["username"],
+            "dob": user.get("dob", "")
+        }), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
 
 if __name__ == '__main__':
     app.run(port=5005, debug=True)

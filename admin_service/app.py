@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from db import packages_collection  # Import from db.py
+from db import packages_collection, users_collection  # Ensure both collections are imported correctly
+from datetime import datetime
 from bson import ObjectId
 
 app = Flask(__name__)
@@ -38,6 +39,26 @@ def delete_package(package_id):
         return jsonify({"message": "Package deleted"}), 200
     return jsonify({"error": "Package not found"}), 404
 
+@app.route('/admin', methods=['GET'])
+def get_user():
+    username = request.args.get('username')
+    if username:
+        # Fetch user data (including birthday message)
+        user = users_collection.find_one({"username": username})
+        if user:
+            # Check birthday
+            today = datetime.now()
+            # Ensure 'dob' is in the correct format, and handle potential parsing issues
+            try:
+                dob = datetime.strptime(user['dob'], '%Y-%m-%d')
+                birthday_today = today.month == dob.month and today.day == dob.day
+                birthday_wish = f"🎉 Happy Birthday, {username}!" if birthday_today else ""
+                return jsonify({"birthday_wish": birthday_wish, "username": username})
+            except Exception as e:
+                return jsonify({"error": f"Error parsing date of birth: {str(e)}"}), 400
+        else:
+            return jsonify({"error": "User not found"}), 404
+    return jsonify({"error": "Username is required"}), 400
 
 if __name__ == '__main__':
     app.run(port=5001, debug=True)
