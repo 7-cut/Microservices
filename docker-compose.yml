@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  admin_service:
+    build: ./admin_service
+    ports:
+      - "5001:5000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/holiday_db
+
+  discount_service:
+    build: ./discount_service
+    ports:
+      - "5002:5000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/holiday_db
+
+  recommendation_service:
+    build: ./recommendation_service
+    ports:
+      - "5003:5000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/holiday_db
+
+  user_service:
+    build: ./user_service
+    ports:
+      - "5004:5000"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/holiday_db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - admin_service
+      - discount_service
+      - recommendation_service
+      - user_service
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
