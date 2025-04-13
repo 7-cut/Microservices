@@ -8,3 +8,4 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client["mmt"]  # this is your 'mmt' database
 packages_collection = db["packages"]
 users_collection = db["users"]  # if you plan to add user auth later
+discounts_collection = db["discounts"]

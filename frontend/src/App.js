@@ -10,6 +10,7 @@ import User from './pages/User';
 import Packages from './pages/Packages';
 import EditPackages from './pages/EditPackages';
 import CustomizePackage from './pages/CustomizePackage';
+import DiscountSettings from './pages/DiscountSettings';
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -54,6 +55,7 @@ function App() {
         <Route path="/packages" element={<Packages />} />
         <Route path="/admin/edit-packages" element={<EditPackages />} />
         <Route path="/customize/:pkgId" element={<CustomizePackage />} />
+        <Route path="/admin/discount" element={<DiscountSettings />} />
       </Routes>
 
       {/* Footer */}

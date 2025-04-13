@@ -17,6 +17,14 @@ export default function Admin() {
         >
           ✏️ Edit Packages
         </button>
+
+        {/* Add Edit Discounts Button */}
+        <button
+          onClick={() => navigate('/admin/discount')}
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow-md"
+        >
+          💸 Edit Discounts
+        </button>
       </div>
     </div>
   );
