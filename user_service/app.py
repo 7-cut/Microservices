@@ -7,8 +7,8 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
-ADMIN_URL = "http://127.0.0.1:5001/packages"
-CARBON_URL = "http://127.0.0.1:5002/carbon/estimate"
+ADMIN_URL = "http://admin_service:5001/packages"
+#CARBON_URL = "http://127.0.0.1:5002/carbon/estimate"
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -60,7 +60,7 @@ def select_package():
         return jsonify({"error": "Package not found"}), 404
 
     # Step 2: Estimate Carbon Footprint
-    try:
+    '''try:
         carbon_payload = {
             "destination": selected["destination"],
             "activities": custom_activities or selected["activities"],
@@ -71,7 +71,7 @@ def select_package():
         carbon_data = carbon_res.json()
 
     except Exception as e:
-        return jsonify({"error": "Carbon estimation failed", "details": str(e)}), 500
+        return jsonify({"error": "Carbon estimation failed", "details": str(e)}), 500'''
 
     # Fetch package info from admin_service as you're already doing
     package_price = selected.get("price", 0)
@@ -168,4 +168,4 @@ def get_user_by_username(username):
         return jsonify({"error": "User not found"}), 404
 
 if __name__ == '__main__':
-    app.run(port=5005, debug=True)
+    app.run(host="0.0.0.0",port=5005, debug=True)
