@@ -15,7 +15,7 @@ export default function DiscountSettings() {
       const data = await res.json();
       if (data.months) {
         setExistingDiscount(data);
-        setMonths(data.months.join(',')); // Display months as a comma-separated string
+        setMonths(data.months.join(','));
         setDiscount(data.discount);
       } else {
         setExistingDiscount(null);
@@ -64,7 +64,7 @@ export default function DiscountSettings() {
 
       const result = await res.json();
       setMessage(result.message);
-      fetchDiscounts(); // refresh
+      fetchDiscounts();
       setMonths('');
       setDiscount('');
     } catch (err) {
@@ -85,7 +85,7 @@ export default function DiscountSettings() {
 
       if (res.ok) {
         alert("Discount deleted successfully");
-        fetchDiscounts(); // Refresh after deletion
+        fetchDiscounts();
       } else {
         alert("Failed to delete discount");
       }
@@ -95,49 +95,110 @@ export default function DiscountSettings() {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-center">Seasonal Discount Settings</h2>
+    <div style={{ padding: '24px' }}>
+      <h2 style={{
+        fontSize: '1.875rem',
+        fontWeight: 'bold',
+        marginBottom: '1.5rem',
+        textAlign: 'center'
+      }}>
+        Seasonal Discount Settings
+      </h2>
 
-      <div className="flex flex-wrap gap-4 mb-6 items-end">
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '16px',
+        marginBottom: '1.5rem',
+        alignItems: 'flex-end'
+      }}>
         <input
           type="text"
           placeholder="Discount Months (e.g. 4,6,12)"
           value={months}
           onChange={e => setMonths(e.target.value)}
-          className="border p-2 rounded w-1/3"
+          style={{
+            border: '1px solid #d1d5db',
+            padding: '8px',
+            borderRadius: '4px',
+            width: '33%'
+          }}
         />
         <input
           type="number"
           placeholder="Discount %"
           value={discount}
           onChange={e => setDiscount(e.target.value)}
-          className="border p-2 rounded w-1/4"
+          style={{
+            border: '1px solid #d1d5db',
+            padding: '8px',
+            borderRadius: '4px',
+            width: '25%'
+          }}
         />
         <button
           onClick={handleSave}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          style={{
+            backgroundColor: '#059669',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease'
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#047857'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#059669'}
         >
           Save Discount
         </button>
       </div>
 
-      {message && <p className="mb-4 text-blue-600 font-semibold">{message}</p>}
+      {message && <p style={{
+        marginBottom: '1rem',
+        color: '#2563eb',
+        fontWeight: '600'
+      }}>{message}</p>}
 
-      <div className="mt-8 border-t pt-4">
-        <h3 className="text-xl font-semibold mb-2">Current Discount:</h3>
+      <div style={{
+        marginTop: '32px',
+        borderTop: '1px solid #e5e7eb',
+        paddingTop: '16px'
+      }}>
+        <h3 style={{
+          fontSize: '1.25rem',
+          fontWeight: '600',
+          marginBottom: '0.5rem'
+        }}>Current Discount:</h3>
         {existingDiscount ? (
-          <div className="bg-gray-100 p-4 rounded shadow">
+          <div style={{
+            backgroundColor: '#f3f4f6',
+            padding: '16px',
+            borderRadius: '8px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}>
             <p><strong>Months:</strong> {existingDiscount.months.join(', ')}</p>
             <p><strong>Discount:</strong> {existingDiscount.discount}%</p>
             <button
               onClick={handleDelete}
-              className="mt-4 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+              style={{
+                marginTop: '16px',
+                backgroundColor: '#ef4444',
+                color: 'white',
+                padding: '4px 12px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s ease'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#dc2626'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#ef4444'}
             >
               Delete Discount
             </button>
           </div>
         ) : (
-          <p className="text-gray-500">No seasonal discount set.</p>
+          <p style={{ color: '#6b7280' }}>No seasonal discount set.</p>
         )}
       </div>
     </div>

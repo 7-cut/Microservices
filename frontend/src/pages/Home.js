@@ -5,33 +5,77 @@ function Home() {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <section className="text-center py-20 bg-gradient-to-r from-blue-200 to-blue-400 text-white">
-        <h2 className="text-4xl font-bold mb-4">Plan Your Dream Vacation ✈️</h2>
-        <p className="text-lg mb-6">Custom packages, discounts, and eco-friendly travel—all in one place.</p>
+    <div style={{ fontFamily: 'Arial, sans-serif' }}>
+      <section style={{
+        textAlign: 'center',
+        padding: '80px 20px',
+        background: 'linear-gradient(to right, #bfdbfe, #93c5fd)',
+        color: 'white'
+      }}>
+        <h2 style={{ fontSize: '2.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+          Plan Your Dream Vacation ✈️
+        </h2>
+        <p style={{ fontSize: '1.125rem', marginBottom: '1.5rem' }}>
+          Custom packages, discounts, and eco-friendly travel—all in one place.
+        </p>
         <button
           onClick={() => navigate('/packages')}
-          className="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold hover:bg-gray-100"
+          style={{
+            backgroundColor: 'white',
+            color: '#2563eb',
+            padding: '8px 24px',
+            borderRadius: '9999px',
+            fontWeight: '600',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease'
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
           Explore Now
         </button>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+      <section style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: '24px',
+        padding: '24px'
+      }}>
         {[
           { title: 'Plan a Trip', link: '/packages' },
           { title: 'Check Discounts', link: '/packages' },
-          { title: 'Recommendations', link: '/packages' },
+          { title: 'Recommendations', link: '/recommend' },
         ].map(({ title, link }, index) => (
           <div
             key={index}
-            className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition-all"
+            style={{
+              backgroundColor: 'white',
+              padding: '24px',
+              borderRadius: '12px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              transition: 'all 0.3s ease',
+              ':hover': {
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+              }
+            }}
           >
-            <h3 className="text-xl font-semibold mb-2">{title}</h3>
-            <p className="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem' }}>{title}</h3>
+            <p style={{ color: '#4b5563' }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
             <button
               onClick={() => navigate(link)}
-              className="mt-4 text-blue-600 hover:underline"
+              style={{
+                marginTop: '1rem',
+                color: '#2563eb',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: '600',
+                ':hover': {
+                  textDecoration: 'underline'
+                }
+              }}
             >
               Go
             </button>

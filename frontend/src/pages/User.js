@@ -35,17 +35,55 @@ function User() {
 
   return (
     <div>
-      <section className="text-center py-20 bg-gradient-to-r from-blue-200 to-blue-400 text-white">
-        <h2 className="text-4xl font-bold mb-4">Welcome, Traveler! 🧳</h2>
+      <section style={{
+        textAlign: 'center',
+        padding: '80px 20px',
+        background: 'linear-gradient(to right, #bfdbfe, #93c5fd)',
+        color: 'white'
+      }}>
+        <h2 style={{
+          fontSize: '2.25rem',
+          fontWeight: 'bold',
+          marginBottom: '1rem'
+        }}>
+          Welcome, Traveler! 🧳
+        </h2>
         {birthdayWish && (
-          <div className="bg-yellow-100 text-yellow-800 p-4 rounded mb-6">
-            <h3 className="text-2xl font-semibold">{birthdayWish}</h3>
+          <div style={{
+            backgroundColor: '#fef3c7',
+            color: '#92400e',
+            padding: '16px',
+            borderRadius: '8px',
+            marginBottom: '1.5rem'
+          }}>
+            <h3 style={{
+              fontSize: '1.5rem',
+              fontWeight: '600'
+            }}>
+              {birthdayWish}
+            </h3>
           </div>
         )}
-        <p className="text-lg mb-6">Customize your package, explore discounts, and more.</p>
+        <p style={{
+          fontSize: '1.125rem',
+          marginBottom: '1.5rem'
+        }}>
+          Customize your package, explore discounts, and more.
+        </p>
         <button
           onClick={() => navigate('/packages')}
-          className="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold hover:bg-gray-100"
+          style={{
+            backgroundColor: 'white',
+            color: '#2563eb',
+            padding: '8px 24px',
+            borderRadius: '9999px',
+            fontWeight: '600',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease'
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
         >
           View Packages
         </button>

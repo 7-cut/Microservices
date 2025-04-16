@@ -21,9 +21,24 @@ def add_package():
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing required fields"}), 400
 
+    # Optional tags field
+    tags = data.get("tags", [])  # Default to empty list if not provided
+    if not isinstance(tags, list):
+        return jsonify({"error": "Tags must be a list"}), 400
+
+    # Build the package document
+    package = {
+        "destination": data["destination"],
+        "price": data["price"],
+        "duration": data["duration"],
+        "activities": data["activities"],
+        "tags": tags
+    }
+
     # Insert into MongoDB
-    result = packages_collection.insert_one(data)
+    result = packages_collection.insert_one(package)
     return jsonify({"message": "Package added", "package_id": str(result.inserted_id)}), 201
+
 
 @app.route('/packages', methods=['GET'])
 def get_all_packages():

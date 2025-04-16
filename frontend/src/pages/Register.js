@@ -1,4 +1,3 @@
-// src/pages/Register.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -35,14 +34,36 @@ export default function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-8 shadow rounded">
-      <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div style={{
+      maxWidth: '448px',
+      margin: '40px auto',
+      backgroundColor: 'white',
+      padding: '32px',
+      borderRadius: '8px',
+      boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+    }}>
+      <h2 style={{
+        fontSize: '1.5rem',
+        fontWeight: 'bold',
+        marginBottom: '1.5rem',
+        textAlign: 'center'
+      }}>Register</h2>
+      
+      <form onSubmit={handleSubmit} style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
         <input
           type="text"
           name="username"
           placeholder="Username"
-          className="w-full border p-2 rounded"
+          style={{
+            width: '100%',
+            border: '1px solid #d1d5db',
+            padding: '8px',
+            borderRadius: '4px'
+          }}
           onChange={handleChange}
           required
         />
@@ -50,20 +71,36 @@ export default function Register() {
           type="password"
           name="password"
           placeholder="Password"
-          className="w-full border p-2 rounded"
+          style={{
+            width: '100%',
+            border: '1px solid #d1d5db',
+            padding: '8px',
+            borderRadius: '4px'
+          }}
           onChange={handleChange}
           required
         />
         <input
           type="date"
           name="dob"
-          className="w-full border p-2 rounded"
+          style={{
+            width: '100%',
+            border: '1px solid #d1d5db',
+            padding: '8px',
+            borderRadius: '4px'
+          }}
           onChange={handleChange}
           required
         />
         <select
           name="userType"
-          className="w-full border p-2 rounded"
+          style={{
+            width: '100%',
+            border: '1px solid #d1d5db',
+            padding: '8px',
+            borderRadius: '4px',
+            backgroundColor: 'white'
+          }}
           onChange={handleChange}
           value={formData.userType}
         >
@@ -72,16 +109,36 @@ export default function Register() {
         </select>
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          style={{
+            width: '100%',
+            backgroundColor: '#2563eb',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease'
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
         >
           Register
         </button>
       </form>
 
-      <p className="mt-4 text-center">
+      <p style={{ 
+        marginTop: '1rem',
+        textAlign: 'center'
+      }}>
         Already have an account?{' '}
         <span
-          className="text-blue-600 cursor-pointer"
+          style={{ 
+            color: '#2563eb',
+            cursor: 'pointer',
+            ':hover': {
+              textDecoration: 'underline'
+            }
+          }}
           onClick={() => navigate('/login')}
         >
           Login here

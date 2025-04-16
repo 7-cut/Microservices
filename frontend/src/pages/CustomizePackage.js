@@ -1,4 +1,3 @@
-// src/pages/CustomizePackage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -10,17 +9,16 @@ function CustomizePackage() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const packageData = location.state?.packageData; // Get data passed from Packages.js
+  const packageData = location.state?.packageData;
 
   useEffect(() => {
-  if (!packageData) {
-    setError("No package data available.");
-  } else {
-    setCustomizedPackage(packageData);
-    setSelectedActivities(packageData.activities);
-  }
-}, [packageData]);
-
+    if (!packageData) {
+      setError("No package data available.");
+    } else {
+      setCustomizedPackage(packageData);
+      setSelectedActivities(packageData.activities);
+    }
+  }, [packageData]);
 
   const handleDateChange = (e) => {
     setSelectedDates(e.target.value);
@@ -37,56 +35,86 @@ function CustomizePackage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // You can send the customized data to the backend or save it locally
     console.log('Customized Package:', {
       ...customizedPackage,
       selectedDates,
       selectedActivities,
     });
-
-    // Navigate to a confirmation page or back to the homepage
     alert("Package customized successfully!");
     navigate('/user');
   };
 
   if (error) {
-    return <div className="p-6 text-red-500">{error}</div>;
+    return <div style={{ padding: '24px', color: '#ef4444' }}>{error}</div>;
   }
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-blue-600">Customize Package</h2>
+    <div style={{ padding: '24px' }}>
+      <h2 style={{
+        fontSize: '1.875rem',
+        fontWeight: 'bold',
+        marginBottom: '1.5rem',
+        color: '#2563eb'
+      }}>
+        Customize Package
+      </h2>
+      
       {customizedPackage && (
         <div>
-          <h3 className="text-xl font-semibold text-blue-500 mb-2">
+          <h3 style={{
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: '#3b82f6',
+            marginBottom: '0.5rem'
+          }}>
             {customizedPackage.destination}
           </h3>
           <p><strong>Original Price:</strong> ${customizedPackage.price}</p>
           <p><strong>Duration:</strong> {customizedPackage.duration}</p>
 
           {/* Select Dates */}
-          <div className="mb-4">
-            <label className="block mb-2">Choose your date:</label>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500'
+            }}>
+              Choose your date:
+            </label>
             <input
               type="date"
               value={selectedDates}
               onChange={handleDateChange}
-              className="w-full border p-2 rounded"
+              style={{
+                width: '100%',
+                border: '1px solid #d1d5db',
+                padding: '8px',
+                borderRadius: '4px'
+              }}
             />
           </div>
 
           {/* Select Activities */}
-          <div className="mb-4">
-            <label className="block mb-2">Choose Activities:</label>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontWeight: '500'
+            }}>
+              Choose Activities:
+            </label>
             {customizedPackage.activities.map((activity) => (
-              <div key={activity} className="flex items-center mb-2">
+              <div key={activity} style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '8px'
+              }}>
                 <input
                   type="checkbox"
                   value={activity}
                   checked={selectedActivities.includes(activity)}
                   onChange={handleActivityChange}
-                  className="mr-2"
+                  style={{ marginRight: '8px' }}
                 />
                 <span>{activity}</span>
               </div>
@@ -95,7 +123,18 @@ function CustomizePackage() {
 
           <button
             onClick={handleSubmit}
-            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            style={{
+              marginTop: '16px',
+              backgroundColor: '#2563eb',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
           >
             Confirm Customization
           </button>

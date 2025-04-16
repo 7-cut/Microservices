@@ -37,14 +37,36 @@ function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center h-[80vh]">
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '80vh'
+    }}>
+      <form onSubmit={handleLogin} style={{
+        backgroundColor: 'white',
+        padding: '24px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        width: '384px'
+      }}>
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: 'bold',
+          marginBottom: '1rem',
+          textAlign: 'center'
+        }}>Login</h2>
 
         <input
           type="text"
           placeholder="Username"
-          className="w-full border p-2 mb-4 rounded"
+          style={{
+            width: '100%',
+            border: '1px solid #d1d5db',
+            padding: '8px',
+            marginBottom: '1rem',
+            borderRadius: '4px'
+          }}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
@@ -52,26 +74,51 @@ function Login() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full border p-2 mb-4 rounded"
+          style={{
+            width: '100%',
+            border: '1px solid #d1d5db',
+            padding: '8px',
+            marginBottom: '1rem',
+            borderRadius: '4px'
+          }}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
 
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+        <button
+          type="submit"
+          style={{
+            width: '100%',
+            backgroundColor: '#2563eb',
+            color: 'white',
+            padding: '8px',
+            borderRadius: '4px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease'
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
+        >
           Login
         </button>
 
-        <p className="mt-4 text-center">
+        <p style={{ marginTop: '1rem', textAlign: 'center' }}>
           Don't have an account?{' '}
           <span
-            className="text-blue-600 cursor-pointer"
+            style={{
+              color: '#2563eb',
+              cursor: 'pointer',
+              ':hover': {
+                textDecoration: 'underline'
+              }
+            }}
             onClick={() => navigate('/register')}
           >
             Register here
           </span>
         </p>
-
       </form>
     </div>
   );
