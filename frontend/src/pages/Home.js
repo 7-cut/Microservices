@@ -62,7 +62,7 @@ function Home() {
             }}
           >
             <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem' }}>{title}</h3>
-            <p style={{ color: '#4b5563' }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <p style={{ color: '#4b5563' }}>Lorem ipsum dolor sit amet, consectetur adipiscing eli</p>
             <button
               onClick={() => navigate(link)}
               style={{

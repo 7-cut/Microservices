@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react';
 export default function EditPackages() {
   const [packages, setPackages] = useState([]);
   const [inputs, setInputs] = useState({});
+  const [activities, setActivities] = useState([
+    { name: '', price: '', customizable: false }
+  ]);
   const API_URL = 'http://localhost:5001/packages';
 
   useEffect(() => {
@@ -23,9 +26,24 @@ export default function EditPackages() {
     setInputs(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleActivityChange = (index, field, value) => {
+    const updated = [...activities];
+    updated[index][field] = field === 'customizable' ? value.target.checked : value;
+    setActivities(updated);
+  };
+
+  const addActivityField = () => {
+    setActivities([...activities, { name: '', price: '', customizable: false }]);
+  };
+
+  const removeActivityField = (index) => {
+    const updated = activities.filter((_, i) => i !== index);
+    setActivities(updated);
+  };
+
   const handleAddPackage = async () => {
-    const { destination, price, duration, activities, tags } = inputs;
-    if (!destination || !price || !duration || !activities) {
+    const { destination, price, duration, tags } = inputs;
+    if (!destination || !price || !duration || !activities.length) {
       alert('All fields except tags are required!');
       return;
     }
@@ -34,7 +52,11 @@ export default function EditPackages() {
       destination,
       price: Number(price),
       duration: `${duration} days`,
-      activities: activities.split(',').map(a => a.trim()),
+      activities: activities.map(a => ({
+        name: a.name,
+        price: Number(a.price),
+        customizable: a.customizable
+      })),
       tags: tags ? tags.split(',').map(t => t.trim()) : []
     };
 
@@ -48,6 +70,7 @@ export default function EditPackages() {
       if (res.ok) {
         fetchPackages();
         setInputs({});
+        setActivities([{ name: '', price: '', customizable: false }]);
       } else {
         alert("Failed to add package");
       }
@@ -96,61 +119,77 @@ export default function EditPackages() {
           placeholder="Destination"
           value={inputs.destination || ''}
           onChange={(e) => handleInputChange('destination', e.target.value)}
-          style={{
-            border: '1px solid #d1d5db',
-            padding: '8px',
-            borderRadius: '4px',
-            width: '20%'
-          }}
+          style={{ border: '1px solid #d1d5db', padding: '8px', borderRadius: '4px', width: '20%' }}
         />
         <input
           type="number"
           placeholder="Price"
           value={inputs.price || ''}
           onChange={(e) => handleInputChange('price', e.target.value)}
-          style={{
-            border: '1px solid #d1d5db',
-            padding: '8px',
-            borderRadius: '4px',
-            width: '20%'
-          }}
+          style={{ border: '1px solid #d1d5db', padding: '8px', borderRadius: '4px', width: '20%' }}
         />
         <input
           type="number"
           placeholder="Duration (days)"
           value={inputs.duration || ''}
           onChange={(e) => handleInputChange('duration', e.target.value)}
-          style={{
-            border: '1px solid #d1d5db',
-            padding: '8px',
-            borderRadius: '4px',
-            width: '20%'
-          }}
-        />
-        <input
-          type="text"
-          placeholder="Activities (comma separated)"
-          value={inputs.activities || ''}
-          onChange={(e) => handleInputChange('activities', e.target.value)}
-          style={{
-            border: '1px solid #d1d5db',
-            padding: '8px',
-            borderRadius: '4px',
-            width: '20%'
-          }}
+          style={{ border: '1px solid #d1d5db', padding: '8px', borderRadius: '4px', width: '20%' }}
         />
         <input
           type="text"
           placeholder="Tags (comma separated)"
           value={inputs.tags || ''}
           onChange={(e) => handleInputChange('tags', e.target.value)}
-          style={{
-            border: '1px solid #d1d5db',
-            padding: '8px',
-            borderRadius: '4px',
-            width: '20%'
-          }}
+          style={{ border: '1px solid #d1d5db', padding: '8px', borderRadius: '4px', width: '20%' }}
         />
+
+        <div style={{ width: '100%' }}>
+          <h4 style={{ marginBottom: '8px' }}>Activities:</h4>
+          {activities.map((activity, index) => (
+            <div key={index} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+              <input
+                type="text"
+                placeholder="Activity name"
+                value={activity.name}
+                onChange={(e) => handleActivityChange(index, 'name', e.target.value)}
+                style={{ flex: 1, padding: '8px' }}
+              />
+              <input
+                type="number"
+                placeholder="Price"
+                value={activity.price}
+                onChange={(e) => handleActivityChange(index, 'price', e.target.value)}
+                style={{ width: '100px', padding: '8px' }}
+              />
+              <label style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <input
+                  type="checkbox"
+                  checked={activity.customizable}
+                  onChange={(e) => handleActivityChange(index, 'customizable', e)}
+                />
+                Customizable
+              </label>
+              {activities.length > 1 && (
+                <button onClick={() => removeActivityField(index)} style={{
+                  background: 'transparent',
+                  color: '#ef4444',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}>✕</button>
+              )}
+            </div>
+          ))}
+          <button onClick={addActivityField} style={{
+            marginTop: '8px',
+            padding: '6px 12px',
+            backgroundColor: '#10b981',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}>+ Add Activity</button>
+        </div>
+
         <button
           onClick={handleAddPackage}
           style={{
@@ -191,19 +230,14 @@ export default function EditPackages() {
           <tbody>
             {packages.length > 0 ? (
               packages.map(pkg => (
-                <tr key={pkg._id} style={{ ':hover': { backgroundColor: '#f9fafb' } }}>
+                <tr key={pkg._id}>
                   <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>{pkg.destination}</td>
                   <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>${pkg.price}</td>
                   <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>{pkg.duration}</td>
                   <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>
-                    {pkg.activities?.join(', ')}
+                    {pkg.activities?.map((a) => `${a.name} ($${a.price}) ${a.customizable ? '[Customizable]' : ''}`).join(', ')}
                   </td>
-                  <td style={{
-                    padding: '12px 16px',
-                    border: '1px solid #e5e7eb',
-                    fontSize: '0.875rem',
-                    color: '#374151'
-                  }}>
+                  <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>
                     {pkg.tags?.length ? pkg.tags.join(', ') : '—'}
                   </td>
                   <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>

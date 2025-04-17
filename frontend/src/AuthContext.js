@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  // 🧠 Load user from localStorage on app start
+  // Load user from localStorage on app start
   useEffect(() => {
     const storedUser = localStorage.getItem('mmt_user');
     if (storedUser) {
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // ✅ Accept username and role as separate values
+  // Accept username and role as separate values
   const login = ({ username, role }) => {
     const userInfo = { username, role };
     setUser(userInfo);
@@ -25,8 +25,9 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('mmt_user'); // clear localStorage on logout
+    localStorage.removeItem('mmt_user');
     localStorage.removeItem('username');
+    localStorage.removeItem('cart')
     navigate('/');
   };
 

@@ -37,12 +37,13 @@ export default function Admin() {
   }, [navigate]);
 
   return (
-    <div style={{
-      textAlign: 'center',
-      padding: '80px 20px',
-      background: 'linear-gradient(to right, #e5e7eb, #d1d5db)',
-      color: 'black'
-    }}>
+    <div>
+      <section style={{
+        textAlign: 'center',
+        padding: '80px 20px',
+        background: 'linear-gradient(to right, #bfdbfe, #93c5fd)',
+        color: 'white'
+      }}>
       <h2 style={{
         fontSize: '2.25rem',
         fontWeight: 'bold',
@@ -88,7 +89,7 @@ export default function Admin() {
         display: 'flex',
         justifyContent: 'center',
         gap: '24px'
-      }}>
+        }}>
         <button
           onClick={() => navigate('/admin/edit-packages')}
           style={{
@@ -103,7 +104,7 @@ export default function Admin() {
           }}
           onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
           onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
-        >
+         >
           ✏️ Edit Packages
         </button>
 
@@ -123,8 +124,9 @@ export default function Admin() {
           onMouseLeave={(e) => e.target.style.backgroundColor = '#059669'}
         >
           💸 Edit Discounts
-        </button>
+          </button>
       </div>
+      </section>
     </div>
   );
 }
