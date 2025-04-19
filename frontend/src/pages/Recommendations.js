@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Recommendations() {
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [recommendedPackages, setRecommendedPackages] = useState([]);
   const [hasFetched, setHasFetched] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cart, setCart] = useState([]);
+  const navigate = useNavigate();
 
   const TAG_API = 'http://localhost:5004/tags';
   const RECOMMEND_API = 'http://localhost:5004/recommend';
 
-  // Fetch tags from backend
   useEffect(() => {
     const fetchTags = async () => {
       try {
@@ -21,9 +24,18 @@ export default function Recommendations() {
       }
     };
     fetchTags();
+
+    const username = localStorage.getItem("username");
+    if (username) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+
+    const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    setCart(savedCart);
   }, []);
 
-  // Handle checkbox toggle
   const toggleTag = (tagName) => {
     setSelectedTags(prev =>
       prev.includes(tagName)
@@ -32,7 +44,6 @@ export default function Recommendations() {
     );
   };
 
-  // Fetch recommendations
   const fetchRecommendations = async () => {
     if (selectedTags.length === 0) {
       alert('Select at least one tag');
@@ -48,6 +59,53 @@ export default function Recommendations() {
       setHasFetched(true);
     } catch (err) {
       console.error('Error fetching recommendations:', err);
+    }
+  };
+
+  const handleCustomizeClick = (pkgId) => {
+    if (!isLoggedIn) {
+      alert("You need to log in to customize a package.");
+      navigate('/login');
+    } else {
+      const selectedPackage = recommendedPackages.find(pkg => pkg._id === pkgId);
+      navigate(`/customize/${pkgId}`, { state: { packageData: selectedPackage } });
+    }
+  };
+
+  const handleAddToCart = (pkg) => {
+    if (!isLoggedIn) {
+      alert("You need to log in to add to cart.");
+      navigate('/login');
+      return;
+    }
+
+    const cartFromStorage = JSON.parse(localStorage.getItem('cart')) || [];
+
+    const alreadyInCart = cartFromStorage.some(item =>
+      item._id === pkg._id &&
+      JSON.stringify(item.activities) === JSON.stringify(pkg.activities) &&
+      item.selectedDates === pkg.selectedDates
+    );
+
+    if (!alreadyInCart) {
+      let finalPkg = { ...pkg };
+
+      if (pkg.activities && pkg.allActivities) {
+        const selectedActivityNames = pkg.activities.map(act => act.name);
+        const removedActivities = pkg.allActivities.filter(
+          act => !selectedActivityNames.includes(act.name)
+        );
+
+        const removedAmount = removedActivities.reduce((acc, act) => acc + (act.price || 0), 0);
+        finalPkg.finalPrice = Math.max(pkg.price - removedAmount, 0);
+      }
+
+      const updatedCart = [...cartFromStorage, finalPkg];
+      setCart(updatedCart);
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      alert("Package added to cart!");
+    } else {
+      alert("Package already in cart");
     }
   };
 
@@ -137,11 +195,7 @@ export default function Recommendations() {
                   border: '1px solid #e5e7eb',
                   borderRadius: '8px',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                  backgroundColor: 'white',
-                  transition: 'background-color 0.3s ease',
-                  ':hover': {
-                    backgroundColor: '#f9fafb'
-                  }
+                  backgroundColor: 'white'
                 }}
               >
                 <h4 style={{
@@ -152,8 +206,55 @@ export default function Recommendations() {
                 </h4>
                 <p>Price: ₹{pkg.price}</p>
                 <p>Duration: {pkg.duration}</p>
-                <p>Activities: {pkg.activities.join(', ')}</p>
+                <p><strong>Activities:</strong></p>
+                <ul style={{ paddingLeft: '20px', marginTop: '4px', marginBottom: '8px' }}>
+                  {pkg.activities?.map((act, idx) => (
+                    <li key={idx}>
+                      {act.name}
+                    </li>
+                  ))}
+                </ul>
                 <p>Tags: {pkg.tags.join(', ')}</p>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginTop: '12px',
+                  flexWrap: 'wrap',
+                  gap: '10px'
+                }}>
+                  <button
+                    onClick={() => handleCustomizeClick(pkg._id)}
+                    style={{
+                      backgroundColor: '#2563eb',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
+                  >
+                    Customize
+                  </button>
+
+                  <button
+                    onClick={() => handleAddToCart(pkg)}
+                    style={{
+                      backgroundColor: '#f59e0b',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#d97706'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#f59e0b'}
+                  >
+                    ➕ Add to Cart
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

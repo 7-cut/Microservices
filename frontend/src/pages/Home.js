@@ -44,10 +44,22 @@ function Home() {
         padding: '24px'
       }}>
         {[
-          { title: 'Plan a Trip', link: '/packages' },
-          { title: 'Check Discounts', link: '/packages' },
-          { title: 'Recommendations', link: '/recommend' },
-        ].map(({ title, link }, index) => (
+          {
+            title: 'Plan a Trip',
+            link: '/packages',
+            description: 'Browse and customize holiday packages to fit your dream destination, activities, and budget!'
+          },
+          {
+            title: 'Check Discounts',
+            link: '/packages',
+            description: 'Get the best discounts on your favorite destinations—save more on every trip!'
+          },
+          {
+            title: 'Recommendations',
+            link: '/recommend',
+            description: 'Not sure where to go? Tell us what you like, and we’ll recommend packages just for you!'
+          }
+        ].map(({ title, link, description }, index) => (
           <div
             key={index}
             style={{
@@ -56,13 +68,10 @@ function Home() {
               borderRadius: '12px',
               boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
               transition: 'all 0.3s ease',
-              ':hover': {
-                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-              }
             }}
           >
             <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem' }}>{title}</h3>
-            <p style={{ color: '#4b5563' }}>Lorem ipsum dolor sit amet, consectetur adipiscing eli</p>
+            <p style={{ color: '#4b5563' }}>{description}</p>
             <button
               onClick={() => navigate(link)}
               style={{
@@ -71,10 +80,7 @@ function Home() {
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontWeight: '600',
-                ':hover': {
-                  textDecoration: 'underline'
-                }
+                fontWeight: '600'
               }}
             >
               Go
