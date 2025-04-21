@@ -15,7 +15,7 @@ function Packages() {
     const username = localStorage.getItem("username");
     if (username) {
       setIsLoggedIn(true);
-      fetch(`http://localhost:5005/user/${username}`)
+      fetch(`/api/user/user/${username}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.dob) {
@@ -29,7 +29,7 @@ function Packages() {
   }, []);
 
   useEffect(() => {
-    fetch(`http://localhost:5001/packages`)
+    fetch(`/api/admin/packages`)
       .then((res) => res.json())
       .then((data) => {
         setPackages(data);
@@ -43,7 +43,7 @@ function Packages() {
 
   useEffect(() => {
     if (userDob) {
-      fetch(`http://localhost:5003/discount/calculate`, {
+      fetch(`/api/discount/discount/calculate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ dob: userDob })

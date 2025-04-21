@@ -17,7 +17,7 @@ function User() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5005/user?username=${username}`);
+        const response = await fetch(`/api/user/user?username=${username}`);
         const data = await response.json();
 
         if (response.ok) {

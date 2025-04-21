@@ -6,7 +6,7 @@ export default function DiscountSettings() {
   const [existingDiscount, setExistingDiscount] = useState(null);
   const [message, setMessage] = useState('');
 
-  const API_URL = 'http://localhost:5003/admin/discount';
+  const API_URL = '/api/discount/admin/discount';
 
   // Fetch current discount from the backend
   const fetchDiscounts = async () => {

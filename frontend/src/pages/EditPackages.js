@@ -7,7 +7,7 @@ export default function EditPackages() {
     { name: '', price: '', customizable: false }
   ]);
   const [dynamicPricing, setDynamicPricing] = useState(false); // NEW
-  const API_URL = 'http://localhost:5001/packages';
+  const API_URL = '/api/admin/packages';
 
   useEffect(() => {
     fetchPackages();

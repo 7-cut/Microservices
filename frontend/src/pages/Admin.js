@@ -18,7 +18,7 @@ export default function Admin() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5001/admin?username=${username}`);
+        const response = await fetch(`/api/admin?username=${username}`);
         const data = await response.json();
 
         if (response.ok) {
