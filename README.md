@@ -14,10 +14,12 @@ All of these have been containerized using Docker for simplicity. Containerized 
 In addition to this, team 6 accepted to integrate their services: push notifications and pricing analysis. 
 
 What has been integrated:
+
 The admin microservice to edit packages was integrated with the pricing service of team 6.
 The user microservice to customize packages and place an order was integrated with push notifications of team 6.
 
 How it was integrated:
+
 Team 6 used bore, a simple tunnelling tool that will let people "expose" their API to the internet. 
 Essentially, they were able to make their microservices global and share their link to us.
 
