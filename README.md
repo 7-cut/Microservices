@@ -11,7 +11,6 @@ The recommendation microservice, runs locally on port 5004.
 The user microservice, runs locally on port 5005.
 
 All of these have been containerized using Docker for simplicity. Containerized MongoDB is used for ease of integration and testing.
-
 In addition to this, team 6 accepted to integrate their services: push notifications and pricing analysis. 
 
 What has been integrated:
