@@ -26,6 +26,7 @@ Essentially, they were able to make their microservices global and share their l
 This link allowed our microservices to interact with theirs. 
 Furthermore, each microservice uses javascript object notation (json) to share data.
 For instance, the pricing service from team 6 required a base price, which will be processed by their backend and returned which can then be displayed by our service.
+Simple Request ----> Response mechanism.
 Similarly, other parameters can be sent as well.
 
 NOTE:
