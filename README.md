@@ -1,9 +1,13 @@
 This project is to demonstrate the functioning of microservices and their integration with another team.
 
 Our service, holiday packages, is made up of 4 microservices:
+
 The admin microservice, runs locally on port 5001.
+
 The discount microservice, runs locally on port 5003.
+
 The recommendation microservice, runs locally on port 5004.
+
 The user microservice, runs locally on port 5005.
 
 All of these have been containerized using Docker for simplicity. Containerized MongoDB is used for ease of integration and testing.
