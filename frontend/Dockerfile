@@ -8,6 +8,7 @@ ENV NODE_OPTIONS=--openssl-legacy-provider
 
 COPY . .
 RUN npm install
+RUN npm install pusher-js
 RUN npm run build
 
 # Production stage

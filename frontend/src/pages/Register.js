@@ -6,6 +6,7 @@ export default function Register() {
     username: "",
     password: "",
     dob: "",
+    email: "",  // Added email field
     userType: "user",
   });
 
@@ -48,7 +49,7 @@ export default function Register() {
         marginBottom: '1.5rem',
         textAlign: 'center'
       }}>Register</h2>
-      
+
       <form onSubmit={handleSubmit} style={{
         display: 'flex',
         flexDirection: 'column',
@@ -71,6 +72,19 @@ export default function Register() {
           type="password"
           name="password"
           placeholder="Password"
+          style={{
+            width: '100%',
+            border: '1px solid #d1d5db',
+            padding: '8px',
+            borderRadius: '4px'
+          }}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"  // Email input type added
+          name="email"
+          placeholder="Email"
           style={{
             width: '100%',
             border: '1px solid #d1d5db',
@@ -126,13 +140,13 @@ export default function Register() {
         </button>
       </form>
 
-      <p style={{ 
+      <p style={{
         marginTop: '1rem',
         textAlign: 'center'
       }}>
         Already have an account?{' '}
         <span
-          style={{ 
+          style={{
             color: '#2563eb',
             cursor: 'pointer',
             ':hover': {

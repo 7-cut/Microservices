@@ -6,6 +6,7 @@ export default function EditPackages() {
   const [activities, setActivities] = useState([
     { name: '', price: '', customizable: false }
   ]);
+  const [dynamicPricing, setDynamicPricing] = useState(false); // NEW
   const API_URL = 'http://localhost:5001/packages';
 
   useEffect(() => {
@@ -42,42 +43,106 @@ export default function EditPackages() {
   };
 
   const handleAddPackage = async () => {
-    const { destination, price, duration, tags } = inputs;
-    if (!destination || !price || !duration || !activities.length) {
-      alert('All fields except tags are required!');
-      return;
-    }
+  const { destination, price, duration, tags } = inputs;
+  if (!destination || (!price && !dynamicPricing) || !duration || !activities.length) {
+    alert('All fields except tags are required!');
+    return;
+  }
 
-    const newPackage = {
-      destination,
-      price: Number(price),
-      duration: `${duration} days`,
-      activities: activities.map(a => ({
-        name: a.name,
-        price: Number(a.price),
-        customizable: a.customizable
-      })),
-      tags: tags ? tags.split(',').map(t => t.trim()) : []
+  const visitors = Math.floor(Math.random() * 5) + 1;
+  const bookings = Math.floor(Math.random() * 100);
+  const today = new Date().toISOString().split('T')[0];
+
+  let finalPrice = Number(price);
+  let pricingError = false; // Flag to track if pricing API call failed
+
+  const packagePayload = {
+    destination,
+    price: Number(price) || 1000,
+    duration: `${duration} days`,
+    activities: activities.map(a => ({
+      name: a.name,
+      price: Number(a.price),
+      customizable: a.customizable
+    })),
+    tags: tags ? tags.split(',').map(t => t.trim()) : [],
+    dynamicPricing,
+    visitors,
+    bookings,
+    selectedDates: today
+  };
+
+  // If dynamic pricing is enabled, hit the pricing API
+  if (dynamicPricing) {
+    const pricingPayload = {
+      packageId: Math.floor(Date.now() / 1000).toString(), // dummy ID for now
+      date: packagePayload.selectedDates,
+      destination: packagePayload.destination,
+      visitors: packagePayload.visitors,
+      bookings: packagePayload.bookings,
+      price: packagePayload.price,
+      duration: packagePayload.duration,
+      activities: packagePayload.activities,
+      tags: packagePayload.tags,
+      dynamicPricing: packagePayload.dynamicPricing
     };
 
     try {
-      const res = await fetch(API_URL, {
+      const pricingRes = await fetch(`http://bore.pub:30001/package-price`, { //http://bore.pub:30001/package-price
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPackage)
+        body: JSON.stringify(pricingPayload)
       });
 
-      if (res.ok) {
-        fetchPackages();
-        setInputs({});
-        setActivities([{ name: '', price: '', customizable: false }]);
+      if (pricingRes.ok) {
+        const pricingData = await pricingRes.json();
+        console.log(pricingData);
+        finalPrice = pricingData.final_price;
+        console.log(finalPrice)
       } else {
-        alert("Failed to add package");
+        console.error("Pricing API failed with status:", pricingRes.status);
+        pricingError = true;
+        alert("Failed to fetch dynamic price. Using base price.");
       }
     } catch (err) {
-      console.error("Error adding package:", err);
+      console.error("Pricing API error:", err);
+      pricingError = true;
+      alert("Failed to fetch dynamic price. Using base price.");
     }
+  }
+
+  // Final package with computed price
+  const newPackage = {
+    ...packagePayload,
+    basePrice: packagePayload.price,
+    computedPrice: finalPrice
   };
+
+  console.log(newPackage.computedPrice)
+  // Save package to MongoDB via your own API
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newPackage)
+    });
+
+    if (res.ok) {
+      fetchPackages();
+      setInputs({});
+      setActivities([{ name: '', price: '', customizable: false }]);
+      setDynamicPricing(false);
+      if (pricingError) {
+        alert("Package added successfully, but dynamic pricing failed.");
+      }
+    } else {
+      alert("Failed to add package.");
+    }
+  } catch (err) {
+    console.error("Error adding package:", err);
+    alert("Failed to add package.");
+  }
+};
 
   const handleDelete = async (id) => {
     try {
@@ -189,6 +254,14 @@ export default function EditPackages() {
             cursor: 'pointer'
           }}>+ Add Activity</button>
         </div>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+          <input
+            type="checkbox"
+            checked={dynamicPricing}
+            onChange={(e) => setDynamicPricing(e.target.checked)}
+          />
+          Dynamic Pricing
+        </label>
 
         <button
           onClick={handleAddPackage}
@@ -220,7 +293,8 @@ export default function EditPackages() {
           <thead style={{ backgroundColor: '#f3f4f6' }}>
             <tr>
               <th style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>Destination</th>
-              <th style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>Price</th>
+              <th style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>Base Price</th>
+              <th style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>Computed Price</th>
               <th style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>Duration</th>
               <th style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>Activities</th>
               <th style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>Tags</th>
@@ -232,7 +306,8 @@ export default function EditPackages() {
               packages.map(pkg => (
                 <tr key={pkg._id}>
                   <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>{pkg.destination}</td>
-                  <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>${pkg.price}</td>
+                  <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>${pkg.basePrice || '—'}</td>
+                  <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>${pkg.computedPrice || pkg.basePrice || '—'}</td>
                   <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>{pkg.duration}</td>
                   <td style={{ padding: '12px 16px', border: '1px solid #e5e7eb' }}>
                     {pkg.activities?.map((a) => `${a.name} ($${a.price}) ${a.customizable ? '[Customizable]' : ''}`).join(', ')}

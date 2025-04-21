@@ -130,9 +130,9 @@ function Packages() {
         gap: '24px'
       }}>
         {packages.map((pkg) => {
-          const { price } = pkg;
+          const basePrice = pkg.computedPrice ?? pkg.price;
           const discount = discounts.discount_percent || 0;
-          const discountedPrice = price * (1 - discount / 100);
+          const discountedPrice = basePrice * (1 - discount / 100);
           return (
             <div key={pkg._id} style={{
               backgroundColor: 'white',
@@ -151,7 +151,7 @@ function Packages() {
               }}>
                 {pkg.destination}
               </h3>
-              <p><strong>Price:</strong> ${price}</p>
+              <p><strong>Price:</strong> ${basePrice}</p>
               <p><strong>Duration:</strong> {pkg.duration}</p>
               <p><strong>Activities:</strong></p>
               <ul style={{ paddingLeft: '20px', marginTop: '4px', marginBottom: '8px' }}>

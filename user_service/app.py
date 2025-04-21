@@ -8,7 +8,8 @@ app = Flask(__name__)
 CORS(app)
 
 ADMIN_URL = "http://admin_service:5001/packages"
-#CARBON_URL = "http://127.0.0.1:5002/carbon/estimate"
+
+# CARBON_URL = "http://127.0.0.1:5002/carbon/estimate"
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -17,16 +18,23 @@ def register():
     password = data.get("password")
     userType = data.get("userType", "user")  # default role is 'user'
     dob = data.get("dob")  # Extract DOB from the request data
+    email = data.get("email")  # Extract email from the request data
 
-    if not username or not password or not dob:
-        return jsonify({"error": "Username, password, and DOB are required"}), 400
+    if not username or not password or not dob or not email:
+        return jsonify({"error": "Username, password, DOB, and email are required"}), 400
 
     # Check if user already exists
     if users_collection.find_one({"username": username}):
         return jsonify({"error": "Username already taken"}), 409
 
     # Save to DB
-    new_user = {"username": username, "password": password, "userType": userType, "dob": dob}
+    new_user = {
+        "username": username,
+        "password": password,
+        "userType": userType,
+        "dob": dob,
+        "email": email  # Include email in the user data
+    }
     users_collection.insert_one(new_user)
 
     return jsonify({"message": "Registration successful"}), 201
@@ -98,19 +106,20 @@ def select_package():
 
     # Final response
     response = {
-    "user_id": user_id,
-    "package_id": package_id,
-    "custom_dates": custom_dates,
-    "custom_activities": custom_activities,
-    "carbon_estimate": carbon_data,
-    "original_price": package_price,
-    "discount_percent": discount_percent,
-    "discount_reason": discount_reason,
-    "final_price": final_price,
-    "notes": "Package customized, evaluated, and priced."
-}
+        "user_id": user_id,
+        "package_id": package_id,
+        "custom_dates": custom_dates,
+        "custom_activities": custom_activities,
+        "carbon_estimate": carbon_data,
+        "original_price": package_price,
+        "discount_percent": discount_percent,
+        "discount_reason": discount_reason,
+        "final_price": final_price,
+        "notes": "Package customized, evaluated, and priced."
+    }
 
     return jsonify(response), 200
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -125,6 +134,7 @@ def login():
     else:
         return jsonify({"message": "Invalid credentials"}), 401
 
+
 @app.route('/packages/<pkg_id>', methods=['GET'])
 def get_package_by_id(pkg_id):
     try:
@@ -138,6 +148,7 @@ def get_package_by_id(pkg_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/user', methods=['GET'])
 def get_user():
@@ -156,16 +167,48 @@ def get_user():
             return jsonify({"error": "User not found"}), 404
     return jsonify({"error": "Username is required"}), 400
 
+
 @app.route('/user/<username>', methods=['GET'])
 def get_user_by_username(username):
     user = users_collection.find_one({"username": username})
     if user:
         return jsonify({
             "username": user["username"],
-            "dob": user.get("dob", "")
+            "dob": user.get("dob", ""),
+            "email": user.get("email", "")
         }), 200
     else:
         return jsonify({"error": "User not found"}), 404
 
+
+@app.route('/checkout', methods=['POST'])
+def checkout():
+    data = request.get_json()
+
+    if not isinstance(data, dict):  # Expecting a single object for checkout
+        return jsonify({"error": "Expected checkout data object"}), 400
+
+    username = data.get("username")
+    if not username:
+        return jsonify({"error": "Username is required"}), 400
+
+    # Fetch user email from MongoDB based on username
+    try:
+        user = db.users.find_one({"username": username})
+        if not user or not user.get("email"):
+            return jsonify({"error": "User not found or email missing"}), 404
+
+        user_email = user["email"]
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch user email: {str(e)}"}), 500
+
+    results = {
+        "email": user_email,
+        "message": "Checkout successful"
+    }
+
+    return jsonify(results), 200
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",port=5005, debug=True)
+    app.run(host="0.0.0.0", port=5005, debug=True)
