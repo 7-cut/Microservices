@@ -27,5 +27,3 @@ NOTE:
 I have used ngnix listening on default port 80 which is essentially reverse proxying requests between OUR services. 
 {Runs locally. The config files have not been uploaded.}
 This implies that each microservice does not directly communicate with other microservices, but sends a message to the nginx server which then forwards it to the right microservice.
-
-Hope this helped.
